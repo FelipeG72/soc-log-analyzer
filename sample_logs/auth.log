@@ -1,0 +1,9 @@
+2026-05-25 10:01:22 Failed password for root from 192.168.1.50 port 45621 ssh2
+2026-05-25 10:01:25 Failed password for root from 192.168.1.50 port 45622 ssh2
+2026-05-25 10:01:28 Failed password for root from 192.168.1.50 port 45623 ssh2
+2026-05-25 10:01:31 Failed password for root from 192.168.1.50 port 45624 ssh2
+2026-05-25 10:01:33 Failed password for root from 192.168.1.50 port 45625 ssh2
+2026-05-25 10:03:10 Accepted password for root from 192.168.1.50 port 45630 ssh2
+2026-05-25 10:10:10 powershell.exe -EncodedCommand SQBFAFgA
+2026-05-25 10:12:00 New user admin2 created
+2026-05-25 10:15:40 nmap scan detected from 192.168.1.77

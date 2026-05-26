@@ -1,0 +1,39 @@
+SOC Log Analyzer Alert Report
+========================================
+Generated: 2026-05-25 21:19:20.499543
+
+Alert #1
+Title: Possible Brute Force Attack
+Severity: HIGH
+Description: 5 failed login attempts detected for user 'root' from 192.168.1.50.
+MITRE ATT&CK: T1110 - Brute Force
+Recommendation: Block suspicious IP, review authentication logs, enforce MFA.
+----------------------------------------
+Alert #2
+Title: Successful Login After Failed Attempts
+Severity: CRITICAL
+Description: Successful login for 'root' from 192.168.1.50 after failed attempts.
+MITRE ATT&CK: T1110 - Brute Force / Valid Accounts
+Recommendation: Investigate account compromise, reset credentials, review session activity.
+----------------------------------------
+Alert #3
+Title: Suspicious PowerShell Activity
+Severity: HIGH
+Description: 2026-05-25 10:10:10 powershell.exe -EncodedCommand SQBFAFgA
+MITRE ATT&CK: T1059.001 - PowerShell
+Recommendation: Review command execution, check endpoint telemetry, investigate user context.
+----------------------------------------
+Alert #4
+Title: New User Account Created
+Severity: MEDIUM
+Description: 2026-05-25 10:12:00 New user admin2 created
+MITRE ATT&CK: T1136 - Create Account
+Recommendation: Verify whether account creation was authorized.
+----------------------------------------
+Alert #5
+Title: Possible Port Scan Detected
+Severity: MEDIUM
+Description: 2026-05-25 10:15:40 nmap scan detected from 192.168.1.77
+MITRE ATT&CK: T1046 - Network Service Discovery
+Recommendation: Review source IP activity and firewall logs.
+----------------------------------------
