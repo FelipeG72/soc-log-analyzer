@@ -1,43 +1,111 @@
 import re
 import argparse
+import json
+import csv
 from collections import defaultdict
 from datetime import datetime
 
 
-LOG_FILE = "sample_logs/auth.log"
-REPORT_FILE = "reports/alerts_report.txt"
-
 FAILED_LOGIN_THRESHOLD = 5
+
 
 def parse_arguments():
     parser = argparse.ArgumentParser(
         description="Analyze log files for suspicious security activity."
     )
 
-    parser.add_argument(
-        "--log",
-        required=True,
-        help="Path to the log file to analyze"
-    )
-
-    parser.add_argument(
-        "--report",
-        default="reports/alerts_report.txt",
-        help="Path where the alert report will be saved"
-    )
+    parser.add_argument("--log", required=True, help="Path to the log file to analyze")
+    parser.add_argument("--report", default="reports/alerts_report.txt", help="Path for TXT report")
+    parser.add_argument("--json", default="reports/alerts_report.json", help="Path for JSON report")
+    parser.add_argument("--csv", default="reports/alerts_report.csv", help="Path for CSV report")
 
     return parser.parse_args()
+
+
+def parse_timestamp(line):
+    pattern = r"^(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})"
+    match = re.search(pattern, line)
+
+    if match:
+        return datetime.strptime(match.group(1), "%Y-%m-%d %H:%M:%S")
+
+    return None
+
 
 def parse_failed_login(line):
     pattern = r"Failed password for (\w+) from ([\d.]+)"
     match = re.search(pattern, line)
 
     if match:
-        username = match.group(1)
-        ip_address = match.group(2)
-        return username, ip_address
+        return match.group(1), match.group(2), parse_timestamp(line)
 
     return None
+
+
+def parse_log_line(line):
+    timestamp = parse_timestamp(line)
+    lower_line = line.lower()
+
+    failed_login = re.search(r"Failed password for (\w+) from ([\d.]+)", line)
+    if failed_login:
+        return {
+            "timestamp": timestamp,
+            "event_type": "failed_login",
+            "username": failed_login.group(1),
+            "ip_address": failed_login.group(2),
+            "raw": line.strip()
+        }
+
+    successful_login = re.search(r"Accepted password for (\w+) from ([\d.]+)", line)
+    if successful_login:
+        return {
+            "timestamp": timestamp,
+            "event_type": "successful_login",
+            "username": successful_login.group(1),
+            "ip_address": successful_login.group(2),
+            "raw": line.strip()
+        }
+
+    if any(keyword in lower_line for keyword in ["powershell", "-encodedcommand", "invoke-expression", "downloadstring", "iex"]):
+        return {
+            "timestamp": timestamp,
+            "event_type": "suspicious_powershell",
+            "username": None,
+            "ip_address": None,
+            "raw": line.strip()
+        }
+
+    if any(keyword in lower_line for keyword in ["new user", "user created", "admin created", "added user"]):
+        return {
+            "timestamp": timestamp,
+            "event_type": "user_created",
+            "username": None,
+            "ip_address": None,
+            "raw": line.strip()
+        }
+
+    if "nmap" in lower_line or "scan detected" in lower_line:
+        return {
+            "timestamp": timestamp,
+            "event_type": "port_scan",
+            "username": None,
+            "ip_address": None,
+            "raw": line.strip()
+        }
+
+    return None
+
+
+def parse_log_file(log_lines):
+    events = []
+
+    for line in log_lines:
+        event = parse_log_line(line)
+        if event:
+            events.append(event)
+
+    return events
+
 
 def detect_brute_force(log_lines):
     failed_attempts = defaultdict(int)
@@ -47,7 +115,7 @@ def detect_brute_force(log_lines):
         result = parse_failed_login(line)
 
         if result:
-            username, ip_address = result
+            username, ip_address, timestamp = result
             failed_attempts[(username, ip_address)] += 1
 
     for (username, ip_address), count in failed_attempts.items():
@@ -71,11 +139,10 @@ def detect_success_after_failures(log_lines):
         failed = parse_failed_login(line)
 
         if failed:
-            username, ip_address = failed
+            username, ip_address, timestamp = failed
             failed_ips.add(ip_address)
 
-        success_pattern = r"Accepted password for (\w+) from ([\d.]+)"
-        success = re.search(success_pattern, line)
+        success = re.search(r"Accepted password for (\w+) from ([\d.]+)", line)
 
         if success:
             username = success.group(1)
@@ -95,19 +162,10 @@ def detect_success_after_failures(log_lines):
 
 def detect_suspicious_powershell(log_lines):
     alerts = []
-
-    suspicious_keywords = [
-        "powershell",
-        "-encodedcommand",
-        "invoke-expression",
-        "downloadstring",
-        "iex"
-    ]
+    suspicious_keywords = ["powershell", "-encodedcommand", "invoke-expression", "downloadstring", "iex"]
 
     for line in log_lines:
-        lower_line = line.lower()
-
-        if any(keyword in lower_line for keyword in suspicious_keywords):
+        if any(keyword in line.lower() for keyword in suspicious_keywords):
             alerts.append({
                 "title": "Suspicious PowerShell Activity",
                 "severity": "HIGH",
@@ -121,18 +179,10 @@ def detect_suspicious_powershell(log_lines):
 
 def detect_user_creation(log_lines):
     alerts = []
-
-    patterns = [
-        "new user",
-        "user created",
-        "admin created",
-        "added user"
-    ]
+    patterns = ["new user", "user created", "admin created", "added user"]
 
     for line in log_lines:
-        lower_line = line.lower()
-
-        if any(pattern in lower_line for pattern in patterns):
+        if any(pattern in line.lower() for pattern in patterns):
             alerts.append({
                 "title": "New User Account Created",
                 "severity": "MEDIUM",
@@ -180,6 +230,20 @@ def generate_report(alerts, report_file):
             report.write("-" * 40 + "\n")
 
 
+def export_json(alerts, json_file):
+    with open(json_file, "w") as file:
+        json.dump(alerts, file, indent=4)
+
+
+def export_csv(alerts, csv_file):
+    fieldnames = ["title", "severity", "description", "mitre", "recommendation"]
+
+    with open(csv_file, "w", newline="") as file:
+        writer = csv.DictWriter(file, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(alerts)
+
+
 def main():
     args = parse_arguments()
 
@@ -189,6 +253,9 @@ def main():
     with open(args.log, "r") as file:
         log_lines = file.readlines()
 
+    events = parse_log_file(log_lines)
+    print(f"Parsed events: {len(events)}")
+
     alerts = []
     alerts.extend(detect_brute_force(log_lines))
     alerts.extend(detect_success_after_failures(log_lines))
@@ -197,9 +264,13 @@ def main():
     alerts.extend(detect_port_scan(log_lines))
 
     generate_report(alerts, args.report)
+    export_json(alerts, args.json)
+    export_csv(alerts, args.csv)
 
     print(f"Total alerts generated: {len(alerts)}")
     print(f"Report exported to: {args.report}")
+    print(f"JSON exported to: {args.json}")
+    print(f"CSV exported to: {args.csv}")
 
     for alert in alerts:
         print(f"[{alert['severity']}] {alert['title']}")
