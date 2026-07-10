@@ -4,6 +4,8 @@ import json
 import csv
 from collections import defaultdict
 from datetime import datetime
+from parsers.windows_parser import parse_windows_event
+from detections.unauthorized_share import detect_unauthorized_share
 
 
 FAILED_LOGIN_THRESHOLD = 5
@@ -14,10 +16,14 @@ def parse_arguments():
         description="Analyze log files for suspicious security activity."
     )
 
-    parser.add_argument("--log", required=True, help="Path to the log file to analyze")
+    parser.add_argument("--log", help="Path to the log file to analyze")
     parser.add_argument("--report", default="reports/alerts_report.txt", help="Path for TXT report")
     parser.add_argument("--json", default="reports/alerts_report.json", help="Path for JSON report")
     parser.add_argument("--csv", default="reports/alerts_report.csv", help="Path for CSV report")
+    parser.add_argument(
+    "--windows-xml",
+    help="Path to an exported Windows Event XML file"
+    )
 
     return parser.parse_args()
 
@@ -246,6 +252,27 @@ def export_csv(alerts, csv_file):
 
 def main():
     args = parse_arguments()
+    if args.windows_xml:
+        event = parse_windows_event(args.windows_xml)
+        alert = detect_unauthorized_share(event)
+
+    if alert:
+        alerts = [alert]
+
+        generate_report(alerts, args.report)
+        export_json(alerts, args.json)
+        export_csv(alerts, args.csv)
+
+        print(f"[{alert['severity']}] {alert['title']}")
+        print(alert["description"])
+        print(f"Report exported to: {args.report}")
+        return
+
+    print("No suspicious Windows events detected.")
+    return
+            
+    if not args.log and not args.windows_xml:
+        raise SystemExit("Provide either --log or --windows-xml.")
 
     print("=== SOC Log Analyzer ===")
     print(f"Analyzing: {args.log}")

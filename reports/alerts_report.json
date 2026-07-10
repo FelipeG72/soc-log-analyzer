@@ -1,16 +1,9 @@
 [
     {
-        "title": "Possible Brute Force Attack",
+        "title": "Unauthorized Executive Share Access",
         "severity": "HIGH",
-        "description": "5 failed login attempts detected for user 'admin' from 192.168.1.50.",
-        "mitre": "T1110 - Brute Force",
-        "recommendation": "Block suspicious IP, review authentication logs, enforce MFA."
-    },
-    {
-        "title": "Successful Login After Failed Attempts",
-        "severity": "CRITICAL",
-        "description": "Successful login for 'admin' from 192.168.1.50 after failed attempts.",
-        "mitre": "T1110 - Brute Force / Valid Accounts",
-        "recommendation": "Investigate account compromise, reset credentials, review session activity."
+        "description": "GSF-LAB\\sophia.rossi attempted to access \\\\*\\Executives from 192.168.56.20.",
+        "mitre": "T1039 - Data from Network Shared Drive",
+        "recommendation": "Verify whether the access attempt was authorized and review the user's recent activity."
     }
 ]
