@@ -1,11 +1,12 @@
-import re
 import argparse
-import json
 import csv
+import json
+import os
+import re
 from collections import defaultdict
 from datetime import datetime
+from engine.detection_engine import run_detections
 from parsers.windows_parser import parse_windows_event
-from detections.unauthorized_share import detect_unauthorized_share
 
 
 FAILED_LOGIN_THRESHOLD = 5
@@ -254,23 +255,23 @@ def main():
     args = parse_arguments()
     if args.windows_xml:
         event = parse_windows_event(args.windows_xml)
-        alert = detect_unauthorized_share(event)
+        alerts = run_detections(event)
 
-    if alert:
-        alerts = [alert]
+        if alerts:
+            generate_report(alerts, args.report)
+            export_json(alerts, args.json)
+            export_csv(alerts, args.csv)
 
-        generate_report(alerts, args.report)
-        export_json(alerts, args.json)
-        export_csv(alerts, args.csv)
+            for alert in alerts:
+                print(f"[{alert['severity']}] {alert['title']}")
+                print(alert["description"])
 
-        print(f"[{alert['severity']}] {alert['title']}")
-        print(alert["description"])
-        print(f"Report exported to: {args.report}")
+            print(f"Report exported to: {args.report}")
+            return
+
+        print("No suspicious Windows events detected.")
         return
 
-    print("No suspicious Windows events detected.")
-    return
-            
     if not args.log and not args.windows_xml:
         raise SystemExit("Provide either --log or --windows-xml.")
 
