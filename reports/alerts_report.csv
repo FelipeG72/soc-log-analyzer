@@ -1,3 +1,0 @@
-title,severity,description,mitre,recommendation
-Possible Brute Force Attack,HIGH,5 failed login attempts detected for user 'admin' from 192.168.1.50.,T1110 - Brute Force,"Block suspicious IP, review authentication logs, enforce MFA."
-Successful Login After Failed Attempts,CRITICAL,Successful login for 'admin' from 192.168.1.50 after failed attempts.,T1110 - Brute Force / Valid Accounts,"Investigate account compromise, reset credentials, review session activity."

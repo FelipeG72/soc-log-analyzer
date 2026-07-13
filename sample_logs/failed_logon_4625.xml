@@ -1,0 +1,41 @@
+ <Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+ <System>
+  <Provider Name="Microsoft-Windows-Security-Auditing" Guid="{54849625-5478-4994-a5ba-3e3b0328c30d}" /> 
+  <EventID>4625</EventID> 
+  <Version>0</Version> 
+  <Level>0</Level> 
+  <Task>12544</Task> 
+  <Opcode>0</Opcode> 
+  <Keywords>0x8010000000000000</Keywords> 
+  <TimeCreated SystemTime="2026-07-09T06:45:39.6686223Z" /> 
+  <EventRecordID>4250</EventRecordID> 
+  <Correlation ActivityID="{7e005043-0f69-0001-1051-007e690fdd01}" /> 
+  <Execution ProcessID="744" ThreadID="804" /> 
+  <Channel>Security</Channel> 
+  <Computer>GFS-DC01.gsf-lab.local</Computer> 
+  <Security /> 
+  </System>
+ <EventData>
+  <Data Name="SubjectUserSid">S-1-5-18</Data> 
+  <Data Name="SubjectUserName">GFS-DC01$</Data> 
+  <Data Name="SubjectDomainName">GSF-LAB</Data> 
+  <Data Name="SubjectLogonId">0x3e7</Data> 
+  <Data Name="TargetUserSid">S-1-0-0</Data> 
+  <Data Name="TargetUserName">olivia.brown</Data> 
+  <Data Name="TargetDomainName">GSF-LAB</Data> 
+  <Data Name="Status">0xc000015b</Data> 
+  <Data Name="FailureReason">%%2308</Data> 
+  <Data Name="SubStatus">0x0</Data> 
+  <Data Name="LogonType">2</Data> 
+  <Data Name="LogonProcessName">User32</Data> 
+  <Data Name="AuthenticationPackageName">Negotiate</Data> 
+  <Data Name="WorkstationName">GFS-DC01</Data> 
+  <Data Name="TransmittedServices">-</Data> 
+  <Data Name="LmPackageName">-</Data> 
+  <Data Name="KeyLength">0</Data> 
+  <Data Name="ProcessId">0x888</Data> 
+  <Data Name="ProcessName">C:\Windows\System32\svchost.exe</Data> 
+  <Data Name="IpAddress">127.0.0.1</Data> 
+  <Data Name="IpPort">0</Data> 
+  </EventData>
+  </Event>

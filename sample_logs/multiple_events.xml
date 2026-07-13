@@ -1,0 +1,73 @@
+<Events xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+  <Event>
+    <System>
+      <Provider Name="Microsoft-Windows-Security-Auditing"
+                Guid="{54849625-5478-4994-a5ba-3e3b0328c30d}" />
+      <EventID>5145</EventID>
+      <Version>0</Version>
+      <Level>0</Level>
+      <Task>12811</Task>
+      <Opcode>0</Opcode>
+      <Keywords>0x8010000000000000</Keywords>
+      <TimeCreated SystemTime="2026-07-10T23:32:23.9091796Z" />
+      <EventRecordID>5339</EventRecordID>
+      <Correlation />
+      <Execution ProcessID="4" ThreadID="52" />
+      <Channel>Security</Channel>
+      <Computer>GFS-DC01.gsf-lab.local</Computer>
+      <Security />
+    </System>
+
+    <EventData>
+      <Data Name="SubjectUserSid">S-1-5-21-3144496729-2270567714-1137867598-1109</Data>
+      <Data Name="SubjectUserName">sophia.rossi</Data>
+      <Data Name="SubjectDomainName">GSF-LAB</Data>
+      <Data Name="SubjectLogonId">0x4e9ab2</Data>
+      <Data Name="ObjectType">File</Data>
+      <Data Name="IpAddress">192.168.56.20</Data>
+      <Data Name="IpPort">64039</Data>
+      <Data Name="ShareName">\\*\Executives</Data>
+      <Data Name="ShareLocalPath">\??\C:\GFS-CompanyData\Executives</Data>
+      <Data Name="RelativeTargetName">\</Data>
+      <Data Name="AccessMask">0x100081</Data>
+      <Data Name="AccessList">%%1541 %%4416 %%4423</Data>
+      <Data Name="AccessReason">%%1541: %%1805 %%4416: %%1805 %%4423: %%1805</Data>
+    </EventData>
+  </Event>
+
+  <Event>
+    <System>
+      <Provider Name="Microsoft-Windows-Security-Auditing"
+                Guid="{54849625-5478-4994-a5ba-3e3b0328c30d}" />
+      <EventID>5145</EventID>
+      <Version>0</Version>
+      <Level>0</Level>
+      <Task>12811</Task>
+      <Opcode>0</Opcode>
+      <Keywords>0x8010000000000000</Keywords>
+      <TimeCreated SystemTime="2026-07-10T23:32:23.9091796Z" />
+      <EventRecordID>5339</EventRecordID>
+      <Correlation />
+      <Execution ProcessID="4" ThreadID="52" />
+      <Channel>Security</Channel>
+      <Computer>GFS-DC01.gsf-lab.local</Computer>
+      <Security />
+    </System>
+
+    <EventData>
+      <Data Name="SubjectUserSid">S-1-5-21-3144496729-2270567714-1137867598-1109</Data>
+      <Data Name="SubjectUserName">sophia.rossi</Data>
+      <Data Name="SubjectDomainName">GSF-LAB</Data>
+      <Data Name="SubjectLogonId">0x4e9ab2</Data>
+      <Data Name="ObjectType">File</Data>
+      <Data Name="IpAddress">192.168.56.20</Data>
+      <Data Name="IpPort">64039</Data>
+      <Data Name="ShareName">\\*\Executives</Data>
+      <Data Name="ShareLocalPath">\??\C:\GFS-CompanyData\Executives</Data>
+      <Data Name="RelativeTargetName">\</Data>
+      <Data Name="AccessMask">0x100081</Data>
+      <Data Name="AccessList">%%1541 %%4416 %%4423</Data>
+      <Data Name="AccessReason">%%1541: %%1805 %%4416: %%1805 %%4423: %%1805</Data>
+    </EventData>
+  </Event>
+</Events>
